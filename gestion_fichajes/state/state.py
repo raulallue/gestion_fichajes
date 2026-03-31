@@ -729,20 +729,18 @@ class QueryUser(rx.State):
                 return
         
         try:
+            # Combinar y asignar zona horaria (Local -> UTC)
             local_tz = ZoneInfo("Europe/Madrid")
-            
-            # Construir objetos datetime ingenuos
             date_obj = datetime.strptime(self.manual_fichaje_date, "%Y-%m-%d").date()
             time_in_obj = datetime.strptime(self.manual_fichaje_in, "%H:%M").time()
             time_out_obj = datetime.strptime(self.manual_fichaje_out, "%H:%M").time()
             
-            # Combinar y asignar zona horaria, luego a UTC
-            init_dt = datetime.combine(date_obj, time_in_obj, tzinfo=local_tz).astimezone(timezone.utc)
-            end_dt = datetime.combine(date_obj, time_out_obj, tzinfo=local_tz).astimezone(timezone.utc)
+            init_dt = datetime.combine(date_obj, time_in_obj, tzinfo=local_tz)
+            end_dt = datetime.combine(date_obj, time_out_obj, tzinfo=local_tz)
             
             service = ATRService(user.usuario, user.contraseña)
             success = await service.create_fichaje(
-                user.person_id, init_dt, end_dt, self.manual_fichaje_notes  # Pasar notas
+                user.person_id, init_dt, end_dt, self.manual_fichaje_notes
             )
             
             if success:
@@ -812,9 +810,10 @@ class QueryUser(rx.State):
             
             raw_row = self.raw_history_fichajes[self.edit_fichaje_id]
             update_payload = dict(raw_row)
-            update_payload["notes"] = self.edit_fichaje_notes # Actualizar notas
+            update_payload["notes"] = self.edit_fichaje_notes 
+            update_payload["init_date"] = init_dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
             if end_dt:
-                update_payload["end_date"] = end_dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+                update_payload["end_date"] = end_dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
             else:
                 update_payload["end_date"] = None
                 
@@ -830,6 +829,25 @@ class QueryUser(rx.State):
                 
         except Exception as e:
             yield rx.toast.error(f"Error formateando la actualización: {e}")
+
+    async def reset_auto_flags(self):
+        """Resetea las banderas de automatización para el usuario actual (Debug)."""
+        if not self.user_edit_id:
+            return
+            
+        with rx.session() as session:
+            user = session.query(User).filter(User.id == self.user_edit_id).first()
+            if user:
+                user.last_auto_in_1 = None
+                user.last_auto_out_1 = None
+                user.last_auto_in_2 = None
+                user.last_auto_out_2 = None
+                session.add(user)
+                session.commit()
+                yield rx.toast.success("Banderas de automatización corregidas. Ya puedes volver a fichar automáticamente hoy.")
+                yield QueryUser.fetch_dashboard_data
+            else:
+                yield rx.toast.error("No se pudo resetear el usuario.")
 
     # Gestión de Vacaciones
     def seleccionar_usuario_por_nombre(self, nombre: str):

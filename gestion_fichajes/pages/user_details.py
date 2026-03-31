@@ -178,7 +178,7 @@ def edit_fichaje_dialog() -> rx.Component:
                 
                 rx.vstack(
                     rx.text("Fecha", size="2", weight="medium"),
-                    rx.input(type="date", value=QueryUser.edit_fichaje_date, on_change=QueryUser.set_edit_fichaje_date, width="100%", variant="soft", disabled=True),
+                    rx.input(type="date", value=QueryUser.edit_fichaje_date, on_change=QueryUser.set_edit_fichaje_date, width="100%", variant="soft"),
                     spacing="1",
                     width="100%",
                     margin_top="2",
@@ -405,6 +405,42 @@ def user_details_page() -> rx.Component:
                                     align_items="start",
                                     width="100%",
                                 ),
+                                
+                                # Zona de Depuración (Debug)
+                                rx.divider(margin_y="4"),
+                                rx.card(
+                                    rx.vstack(
+                                        rx.hstack(
+                                            rx.icon("bug", size=20, color=rx.color("amber", 9)),
+                                            rx.text("Zona de Pruebas (Debug)", weight="bold", size="3"),
+                                            spacing="2",
+                                            align="center",
+                                        ),
+                                        rx.text(
+                                            "Si cambias el horario y quieres que el motor vuelva a fichar hoy, pulsa el botón de abajo para 'olvidar' que ya se fichó.",
+                                            size="2",
+                                            color_scheme="gray",
+                                        ),
+                                        rx.button(
+                                            "Resetear Automatización de Hoy",
+                                            icon="refresh-cw",
+                                            color_scheme="amber",
+                                            variant="surface",
+                                            size="2",
+                                            align_self="center",
+                                            on_click=QueryUser.reset_auto_flags,
+                                            px="6",
+                                            py="3",
+                                        ),
+                                        spacing="4",
+                                        width="100%",
+                                    ),
+                                    width="100%",
+                                    variant="classic",
+                                    color_scheme="amber",
+                                    padding="6",
+                                ),
+                                
                                 spacing="4",
                                 padding_y="4",
                                 margin_top="10px",

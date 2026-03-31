@@ -1,6 +1,7 @@
 import httpx
 import asyncio
-from datetime import datetime
+import json
+from datetime import datetime, timezone
 from typing import Optional
 
 BASE_URL = "https://clientes.atrpresencia.com/api"
@@ -39,11 +40,13 @@ class ATRService:
             if not res.get("success"):
                 return None
 
-        url = f"{BASE_URL}/checkingIn"
+        url = f"{BASE_URL}/checkingIn/Start"
         headers = {"Authorization": f"Bearer {self.token}"}
+        # Aseguramos UTC y formato con Z
+        init_date_utc = init_date.astimezone(timezone.utc)
         payload = {
             "person_id": person_id,
-            "init_date": init_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            "init_date": init_date_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "notes": notes,
         }
         async with httpx.AsyncClient() as client:
@@ -71,11 +74,14 @@ class ATRService:
 
         url = f"{BASE_URL}/checkingIn/{checking_id}"
         headers = {"Authorization": f"Bearer {self.token}"}
+        # Aseguramos UTC y formato con Z
+        init_utc = init_date.astimezone(timezone.utc)
+        end_utc = end_date.astimezone(timezone.utc)
         payload = {
             "id": checking_id,
             "person_id": person_id,
-            "init_date": init_date.strftime("%Y-%m-%dT%H:%M:%S"),
-            "end_date": end_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            "init_date": init_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "end_date": end_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "notes": notes,
         }
         async with httpx.AsyncClient() as client:
@@ -97,10 +103,13 @@ class ATRService:
 
         url = f"{BASE_URL}/checkingIn"
         headers = {"Authorization": f"Bearer {self.token}"}
+        # Aseguramos UTC y formato con Z
+        init_utc = init_date.astimezone(timezone.utc)
+        end_utc = end_date.astimezone(timezone.utc)
         payload = {
             "person_id": person_id,
-            "init_date": init_date.strftime("%Y-%m-%dT%H:%M:%S"),
-            "end_date": end_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            "init_date": init_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "end_date": end_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "notes": notes,
         }
         async with httpx.AsyncClient() as client:
