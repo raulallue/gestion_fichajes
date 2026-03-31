@@ -1,0 +1,28 @@
+# Directorios de Reflex
+.web/
+.states/
+
+# Python: Entornos virtuales y Cache
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Base de Datos (Muy importante: Privacidad)
+*.db
+*.db-journal
+
+# Secretos y Configuración Local
+.env
+info.txt
+
+# Node.js
+node_modules/
+
+# Sistema y IDEs
+.DS_Store
+.idea/
+.vscode/
+
+# Assets externos
+assets/external/

@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  app:
+    # Nombre de tu imagen en Docker Hub
+    image: rallue/gestion_fichajes:latest
+    container_name: gestion_fichajes
+    ports:
+      - "3004:3004"
+      - "8004:8004"
+    volumes:
+      # Persistencia de la base de datos: 
+      # Montamos el archivo reflex.db del servidor al contenedor
+      - ./reflex.db:/app/reflex.db
+    environment:
+      # Aquí puedes añadir variables si usas un dominio específico en producción
+      # - API_URL=http://tu-vps-ip:8000
+      - REDIS_URL=redis://redis:6379 
+    restart: always
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    container_name: gestion_fichajes_redis
+    restart: always

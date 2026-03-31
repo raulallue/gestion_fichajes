@@ -1,0 +1,16 @@
+.venv
+__pycache__
+.states
+.web
+*.db
+*.db-journal
+*.log
+info.txt
+.env
+.DS_Store
+node_modules
+build.txt
+assets/._*
+.git
+.gitignore
+!alembic/versions/
