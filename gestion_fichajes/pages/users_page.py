@@ -164,7 +164,6 @@ def delete_dialog() -> rx.Component:
     )
 
 def users_page() -> rx.Component:
-    """User management page. Stacks controls on mobile and adds horizontal scrolling to the data table."""
     return rx.box(
         sidebar(),
         navbar(),

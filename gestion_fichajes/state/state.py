@@ -181,11 +181,10 @@ class QueryUser(rx.State):
     # Visibility Toggle
     show_password: bool = False
     sidebar_collapsed: bool = False
-    sidebar_open: bool = False # Controls the visibility of the mobile drawer (mobile/tablet only)
+    sidebar_open: bool = False
     show_add_user_modal: bool = False
 
     def toggle_mobile_sidebar(self):
-        """Toggles the visibility of the mobile navigation drawer."""
         self.sidebar_open = not self.sidebar_open
 
     def toggle_add_user_modal(self):

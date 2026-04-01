@@ -243,7 +243,6 @@ def edit_fichaje_dialog() -> rx.Component:
     )
 
 def user_details_page() -> rx.Component:
-    """Detailed user configuration page. Stacks forms and calendars for mobile/tablet usability."""
     return rx.box(
         sidebar(),
         navbar(),

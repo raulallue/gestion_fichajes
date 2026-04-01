@@ -4,7 +4,6 @@ from gestion_fichajes.components.sidebar import sidebar
 from gestion_fichajes.components.navbar import navbar
 
 def settings_page() -> rx.Component:
-    """Global settings page. Adapts form grids and holiday tables for mobile/tablet usability."""
     return rx.box(
         sidebar(),
         navbar(),

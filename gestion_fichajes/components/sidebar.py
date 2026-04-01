@@ -29,7 +29,6 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
     )
 
 def sidebar() -> rx.Component:
-    """Fixed sidebar for desktop and sliding drawer for mobile/tablet."""
     return rx.box(
         rx.vstack(
             # Header con Logo y Toggle
@@ -183,14 +182,13 @@ def sidebar() -> rx.Component:
             bg=rx.color("gray", 2),
             border_right=f"1px solid {rx.color('gray', 4)}",
             width=rx.cond(QueryUser.sidebar_collapsed, "64px", "280px"),
-            # Responsive positioning:
-            # - Desktop: Fixed at left 0.
-            # - Mobile: Offset by -280px unless toggled open via State.
+            transition="all 0.3s ease",
+            position="fixed",
             left=[rx.cond(~QueryUser.sidebar_open, "-280px", "0px"), rx.cond(~QueryUser.sidebar_open, "-280px", "0px"), "0"],
             top="0",
             z_index="200",
         ),
-        # Dark overlay to focus the sidebar drawer on mobile and allow closing on click.
+        # Overlay for mobile when sidebar is open
         rx.cond(
             QueryUser.sidebar_open,
             rx.box(

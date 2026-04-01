@@ -2,7 +2,6 @@ import reflex as rx
 from gestion_fichajes.state.state import QueryUser
 
 def navbar() -> rx.Component:
-    """A floating top header that appears only on mobile/tablet to provide a hamburger menu."""
     return rx.box(
         rx.hstack(
             rx.hstack(

@@ -5,7 +5,6 @@ from gestion_fichajes.components.navbar import navbar
 from gestion_fichajes.models.model import User
 
 def vacations_page() -> rx.Component:
-    """Vacation calendar page. Stacks the selection card and the listing card verticaly on mobile."""
     return rx.box(
         sidebar(),
         navbar(),

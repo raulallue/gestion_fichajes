@@ -26,7 +26,6 @@ def stat_card(icon: str, label: str, value: str, color: str) -> rx.Component:
     )
 
 def index() -> rx.Component:
-    """Main dashboard page. Adapts stats grid and tables to screen size."""
     return rx.box(
         sidebar(),
         navbar(),
