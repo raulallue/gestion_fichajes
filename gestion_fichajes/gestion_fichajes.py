@@ -1,5 +1,6 @@
 import reflex as rx
 from gestion_fichajes.components.sidebar import sidebar
+from gestion_fichajes.components.navbar import navbar
 from gestion_fichajes.state.state import QueryUser
 from gestion_fichajes.models.model import User
 
@@ -25,26 +26,40 @@ def stat_card(icon: str, label: str, value: str, color: str) -> rx.Component:
     )
 
 def index() -> rx.Component:
-    return rx.hstack(
+    """Main dashboard page. Adapts stats grid and tables to screen size."""
+    return rx.box(
         sidebar(),
+        navbar(),
         rx.box(
             rx.vstack(
-                rx.hstack(
+                rx.vstack(
                     rx.vstack(
                         rx.heading("Dashboard", size="8"),
                         rx.text("Resumen en tiempo real del sistema de control horario.", color=rx.color("gray", 11)),
                         spacing="1",
+                        align_items=["center", "center", "start"],
+                        text_align=["center", "center", "left"],
                     ),
-                    rx.spacer(),
+                    rx.spacer(display=["none", "none", "block"]),
                     # Live clock component
                     rx.card(
                         rx.hstack(
                             rx.icon(tag="clock", color=rx.color("blue", 9)),
+                            # Live clock component - Mobile (date + time)
+                            rx.moment(
+                                format="DD/MM/YYYY - HH:mm:ss",
+                                interval=1000,
+                                tz="Europe/Madrid",
+                                locale="es",
+                                display=["block", "block", "none"],
+                            ),
+                            # Live clock component - Desktop (long format)
                             rx.moment(
                                 format="dddd, D [de] MMMM [de] YYYY, HH:mm:ss",
                                 interval=1000,
                                 tz="Europe/Madrid",
                                 locale="es",
+                                display=["none", "none", "block"],
                             ),
                             align_items="center",
                             spacing="3",
@@ -54,6 +69,8 @@ def index() -> rx.Component:
                     width="100%",
                     align_items="center",
                     padding_bottom="16px",
+                    flex_direction=["column", "column", "row"],
+                    spacing="4",
                 ),
                 
                 # Stats grid
@@ -130,13 +147,13 @@ def index() -> rx.Component:
                         width="100%",
                     ),
                     stat_card("calendar", "Fichajes Mensuales", QueryUser.dash_total_monthly_punches, "purple"),
-                    columns="4",
+                    columns={"initial": "1", "sm": "2", "lg": "4"},
                     spacing="6",
                     width="100%",
                     padding_bottom="32px",
                 ),
                 
-                rx.hstack(
+                rx.vstack(
                     rx.card(
                         rx.vstack(
                             rx.hstack(
@@ -151,32 +168,35 @@ def index() -> rx.Component:
                                 align_items="center",
                                 padding_bottom="4",
                             ),
-                            rx.table.root(
-                                rx.table.header(
-                                    rx.table.row(
-                                        rx.table.column_header_cell("Empleado"),
-                                        rx.table.column_header_cell("Fecha"),
-                                        rx.table.column_header_cell("Entrada"),
-                                        rx.table.column_header_cell("Salida"),
-                                    ),
-                                ),
-                                rx.table.body(
-                                    rx.foreach(
-                                        QueryUser.dash_recent_punches,
-                                        lambda punch: rx.table.row(
-                                            rx.table.cell(rx.text(punch["nombre"], weight="medium")),
-                                            rx.table.cell(punch["fecha"]),
-                                            rx.table.cell(punch["entrada"]),
-                                            rx.table.cell(punch["salida"]),
+                            rx.scroll_area(
+                                rx.table.root(
+                                    rx.table.header(
+                                        rx.table.row(
+                                            rx.table.column_header_cell("Empleado"),
+                                            rx.table.column_header_cell("Fecha"),
+                                            rx.table.column_header_cell("Entrada"),
+                                            rx.table.column_header_cell("Salida"),
                                         ),
-                                    )
+                                    ),
+                                    rx.table.body(
+                                        rx.foreach(
+                                            QueryUser.dash_recent_punches,
+                                            lambda punch: rx.table.row(
+                                                rx.table.cell(rx.text(punch["nombre"], weight="medium")),
+                                                rx.table.cell(punch["fecha"]),
+                                                rx.table.cell(punch["entrada"]),
+                                                rx.table.cell(punch["salida"]),
+                                            ),
+                                        )
+                                    ),
+                                    width="100%",
+                                    variant="surface",
                                 ),
                                 width="100%",
-                                variant="surface",
                             ),
                             width="100%",
                         ),
-                        flex="1",
+                        width="100%",
                         padding="6",
                     ),
                     rx.card(
@@ -184,7 +204,7 @@ def index() -> rx.Component:
                             rx.hstack(
                                 rx.text("Próximos Turnos", size="4", weight="bold"),
                                 rx.spacer(),
-                                rx.hstack(
+                                rx.vstack(
                                     rx.hstack(
                                         rx.checkbox(
                                             on_change=QueryUser.set_show_only_pending,
@@ -222,46 +242,49 @@ def index() -> rx.Component:
                                         ),
                                         spacing="2",
                                     ),
-                                    spacing="4",
+                                    spacing="2",
                                     align="center",
                                 ),
                                 width="100%",
                                 align_items="center",
                                 padding_bottom="4",
                             ),
-                            rx.table.root(
-                                rx.table.header(
-                                    rx.table.row(
-                                        rx.table.column_header_cell("Empleado"),
-                                        rx.table.column_header_cell("Tipo"),
-                                        rx.table.column_header_cell("Hora Prevista"),
-                                        rx.table.column_header_cell("Estado"),
-                                    ),
-                                ),
-                                rx.table.body(
-                                    rx.foreach(
-                                        QueryUser.dash_upcoming_shifts,
-                                        lambda shift: rx.table.row(
-                                            rx.table.cell(rx.text(shift["nombre"], weight="medium")),
-                                            rx.table.cell(
-                                                rx.badge(
-                                                    shift["tipo"],
-                                                    color_scheme=rx.cond(shift["tipo"].contains("Entrada"), "green", "blue")
-                                                )
-                                            ),
-                                            rx.table.cell(rx.text(shift["hora"], weight="bold")),
-                                            rx.table.cell(
-                                                rx.badge(
-                                                    shift["estado"],
-                                                    color_scheme=rx.cond(shift["estado"] == "Completado", "green", "orange"),
-                                                    variant="soft",
-                                                )
-                                            ),
+                            rx.scroll_area(
+                                rx.table.root(
+                                    rx.table.header(
+                                        rx.table.row(
+                                            rx.table.column_header_cell("Empleado"),
+                                            rx.table.column_header_cell("Tipo"),
+                                            rx.table.column_header_cell("Hora Prevista"),
+                                            rx.table.column_header_cell("Estado"),
                                         ),
-                                    )
+                                    ),
+                                    rx.table.body(
+                                        rx.foreach(
+                                            QueryUser.dash_upcoming_shifts,
+                                            lambda shift: rx.table.row(
+                                                rx.table.cell(rx.text(shift["nombre"], weight="medium")),
+                                                rx.table.cell(
+                                                    rx.badge(
+                                                        shift["tipo"],
+                                                        color_scheme=rx.cond(shift["tipo"].contains("Entrada"), "green", "blue")
+                                                    )
+                                                ),
+                                                rx.table.cell(rx.text(shift["hora"], weight="bold")),
+                                                rx.table.cell(
+                                                    rx.badge(
+                                                        shift["estado"],
+                                                        color_scheme=rx.cond(shift["estado"] == "Completado", "green", "orange"),
+                                                        variant="soft",
+                                                    )
+                                                ),
+                                            ),
+                                        )
+                                    ),
+                                    width="100%",
+                                    variant="surface",
                                 ),
                                 width="100%",
-                                variant="surface",
                             ),
                             rx.cond(
                                 QueryUser.dash_upcoming_shifts.length() == 0,
@@ -272,7 +295,7 @@ def index() -> rx.Component:
                             ),
                             width="100%",
                         ),
-                        flex="1",
+                        width="100%",
                         padding="6",
                     ),
                     width="100%",
@@ -283,7 +306,8 @@ def index() -> rx.Component:
                 width="100%",
                 max_width="1200px",
                 margin="0 auto",
-                padding="40px",
+                padding=["20px", "20px", "40px"],
+                padding_top=["80px", "80px", "40px"],
             ),
             flex="1",
             margin_left=["0", "0", rx.cond(QueryUser.sidebar_collapsed, "64px", "280px")],

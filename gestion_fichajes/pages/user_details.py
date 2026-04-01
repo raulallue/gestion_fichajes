@@ -1,6 +1,7 @@
 import reflex as rx
 from gestion_fichajes.state.state import QueryUser
 from gestion_fichajes.components.sidebar import sidebar
+from gestion_fichajes.components.navbar import navbar
 
 def calendar_component() -> rx.Component:
     return rx.vstack(
@@ -242,24 +243,29 @@ def edit_fichaje_dialog() -> rx.Component:
     )
 
 def user_details_page() -> rx.Component:
-    return rx.hstack(
+    """Detailed user configuration page. Stacks forms and calendars for mobile/tablet usability."""
+    return rx.box(
         sidebar(),
+        navbar(),
         manual_fichaje_dialog(),
         edit_fichaje_dialog(),
         rx.box(
             rx.vstack(
-                rx.hstack(
+                rx.vstack(
                     rx.button(
                         rx.icon(tag="arrow-left"),
                         variant="ghost",
                         on_click=lambda: rx.redirect("/usuarios"),
+                        width=["100%", "auto"],
                     ),
                     rx.heading(
                         rx.cond(QueryUser.user_edit_id, "Editar Usuario", "Añadir Nuevo Usuario"),
-                        size="7"
+                        size="7",
+                        text_align="center",
                     ),
                     spacing="3",
                     align_items="center",
+                    flex_direction=["column", "row"],
                 ),
                 
                 rx.card(
@@ -323,7 +329,7 @@ def user_details_page() -> rx.Component:
                                         ),
                                         spacing="1",
                                     ),
-                                    columns="2",
+                                    columns={"initial": "1", "sm": "2"},
                                     spacing="4",
                                     width="100%",
                                 ),
@@ -374,7 +380,7 @@ def user_details_page() -> rx.Component:
                                         rx.input(type="time", value=QueryUser.nuevo_chout_2, on_change=QueryUser.set_nuevo_chout_2, width="100%", variant="soft", disabled=QueryUser.nuevo_intensiva),
                                         spacing="1",
                                     ),
-                                    columns="2",
+                                    columns={"initial": "1", "sm": "2"},
                                     spacing="4",
                                     width="100%",
                                 ),
@@ -388,7 +394,7 @@ def user_details_page() -> rx.Component:
                                 rx.divider(),
                                 rx.vstack(
                                     rx.text("Días de Trabajo", weight="medium"),
-                                    rx.hstack(
+                                    rx.flex(
                                         rx.foreach(
                                             [0, 1, 2, 3, 4, 5, 6],
                                             lambda day: rx.button(
@@ -397,9 +403,13 @@ def user_details_page() -> rx.Component:
                                                 color_scheme=rx.cond(QueryUser.nuevo_work_days.contains(day), "blue", "gray"),
                                                 variant=rx.cond(QueryUser.nuevo_work_days.contains(day), "solid", "soft"),
                                                 size="2",
+                                                flex="1",
+                                                min_width="40px",
                                             )
                                         ),
                                         spacing="2",
+                                        wrap="wrap",
+                                        width="100%",
                                     ),
                                     spacing="2",
                                     align_items="start",
@@ -531,7 +541,7 @@ def user_details_page() -> rx.Component:
                                         background=rx.color("blue", 2),
                                         border_radius="8px",
                                     ),
-                                    columns="2",
+                                    columns={"initial": "1", "lg": "2"},
                                     spacing="6",
                                     width="100%",
                                 ),
@@ -566,65 +576,68 @@ def user_details_page() -> rx.Component:
                                     width="100%",
                                     align_items="center",
                                 ),
-                                rx.table.root(
-                                    rx.table.header(
-                                        rx.table.row(
-                                            rx.table.column_header_cell(
-                                                rx.hstack(
-                                                    rx.text("Fecha"),
-                                                    rx.icon(
-                                                        tag=rx.cond(QueryUser.history_sort_key == "fecha", rx.cond(QueryUser.history_sort_asc, "arrow-up", "arrow-down"), "chevrons-up-down"),
-                                                        size=13,
-                                                    ),
-                                                    cursor="pointer",
-                                                    on_click=lambda: QueryUser.sort_history("fecha"),
-                                                    spacing="1",
-                                                    align_items="center",
-                                                )
+                                rx.scroll_area(
+                                    rx.table.root(
+                                        rx.table.header(
+                                            rx.table.row(
+                                                rx.table.column_header_cell(
+                                                    rx.hstack(
+                                                        rx.text("Fecha"),
+                                                        rx.icon(
+                                                            tag=rx.cond(QueryUser.history_sort_key == "fecha", rx.cond(QueryUser.history_sort_asc, "arrow-up", "arrow-down"), "chevrons-up-down"),
+                                                            size=13,
+                                                        ),
+                                                        cursor="pointer",
+                                                        on_click=lambda: QueryUser.sort_history("fecha"),
+                                                        spacing="1",
+                                                        align_items="center",
+                                                    )
+                                                ),
+                                                rx.table.column_header_cell(
+                                                    rx.hstack(
+                                                        rx.text("Entrada"),
+                                                        rx.icon(
+                                                            tag=rx.cond(QueryUser.history_sort_key == "entrada", rx.cond(QueryUser.history_sort_asc, "arrow-up", "arrow-down"), "chevrons-up-down"),
+                                                            size=13,
+                                                        ),
+                                                        cursor="pointer",
+                                                        on_click=lambda: QueryUser.sort_history("entrada"),
+                                                        spacing="1",
+                                                        align_items="center",
+                                                    )
+                                                ),
+                                                rx.table.column_header_cell("Salida"),
+                                                rx.table.column_header_cell("Notas"),
+                                                rx.table.column_header_cell("", width="50px"),
                                             ),
-                                            rx.table.column_header_cell(
-                                                rx.hstack(
-                                                    rx.text("Entrada"),
-                                                    rx.icon(
-                                                        tag=rx.cond(QueryUser.history_sort_key == "entrada", rx.cond(QueryUser.history_sort_asc, "arrow-up", "arrow-down"), "chevrons-up-down"),
-                                                        size=13,
-                                                    ),
-                                                    cursor="pointer",
-                                                    on_click=lambda: QueryUser.sort_history("entrada"),
-                                                    spacing="1",
-                                                    align_items="center",
-                                                )
-                                            ),
-                                            rx.table.column_header_cell("Salida"),
-                                            rx.table.column_header_cell("Notas"),
-                                            rx.table.column_header_cell("", width="50px"),
                                         ),
-                                    ),
-                                    rx.table.body(
-                                        rx.foreach(
-                                            QueryUser.history_fichajes,
-                                            lambda h: rx.table.row(
-                                                rx.table.cell(h["fecha"]),
-                                                rx.table.cell(h["entrada"]),
-                                                rx.table.cell(h["salida"]),
-                                                rx.table.cell(h["notas"], size="1"),
-                                                rx.table.cell(
-                                                    rx.button(
-                                                        rx.icon(tag="pencil", size=14),
-                                                        variant="ghost",
-                                                        color_scheme="gray",
-                                                        on_click=lambda: QueryUser.open_edit_dialog(h["id"]),
+                                        rx.table.body(
+                                            rx.foreach(
+                                                QueryUser.history_fichajes,
+                                                lambda h: rx.table.row(
+                                                    rx.table.cell(h["fecha"]),
+                                                    rx.table.cell(h["entrada"]),
+                                                    rx.table.cell(h["salida"]),
+                                                    rx.table.cell(h["notas"], size="1"),
+                                                    rx.table.cell(
+                                                        rx.button(
+                                                            rx.icon(tag="pencil", size=14),
+                                                            variant="ghost",
+                                                            color_scheme="gray",
+                                                            on_click=lambda: QueryUser.open_edit_dialog(h["id"]),
+                                                        ),
+                                                        padding="2px",
+                                                        display="flex",
+                                                        align_items="center",
                                                     ),
-                                                    padding="2px",
-                                                    display="flex",
                                                     align_items="center",
                                                 ),
-                                                align_items="center",
                                             ),
                                         ),
+                                        width="100%",
+                                        variant="surface",
                                     ),
                                     width="100%",
-                                    variant="surface",
                                 ),
                                 rx.cond(
                                     QueryUser.history_fichajes.length() == 0,
@@ -675,7 +688,8 @@ def user_details_page() -> rx.Component:
                 max_width="1200px",
                 width="100%",
                 margin="0 auto",
-                padding="40px",
+                padding=["20px", "20px", "40px"],
+                padding_top=["80px", "80px", "40px"],
             ),
             flex="1",
             margin_left=["0", "0", rx.cond(QueryUser.sidebar_collapsed, "64px", "280px")],

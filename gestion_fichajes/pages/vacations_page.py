@@ -1,14 +1,24 @@
 import reflex as rx
 from gestion_fichajes.state.state import QueryUser
 from gestion_fichajes.components.sidebar import sidebar
+from gestion_fichajes.components.navbar import navbar
 from gestion_fichajes.models.model import User
 
 def vacations_page() -> rx.Component:
-    return rx.hstack(
+    """Vacation calendar page. Stacks the selection card and the listing card verticaly on mobile."""
+    return rx.box(
         sidebar(),
+        navbar(),
         rx.box(
             rx.vstack(
-                rx.heading("Calendario de Vacaciones", size="8", padding_bottom="24px"),
+                rx.vstack(
+                    rx.heading("Calendario de Vacaciones", size="8"),
+                    rx.text("Registra y gestiona los periodos de ausencia de la plantilla.", color=rx.color("gray", 11)),
+                    spacing="1",
+                    align_items=["center", "center", "start"],
+                    text_align=["center", "center", "left"],
+                    padding_bottom="24px",
+                ),
                 
                 rx.grid(
                     # Columna Izquierda: Selección de Usuario y Añadir Fecha
@@ -105,7 +115,7 @@ def vacations_page() -> rx.Component:
                         ),
                         width="100%",
                     ),
-                    columns="2",
+                    columns={"initial": "1", "lg": "2"},
                     spacing="6",
                     width="100%",
                 ),
@@ -113,7 +123,8 @@ def vacations_page() -> rx.Component:
                 width="100%",
                 max_width="1200px",
                 margin="0 auto",
-                padding="40px",
+                padding=["20px", "20px", "40px"],
+                padding_top=["80px", "80px", "40px"],
             ),
             flex="1",
             margin_left=["0", "0", rx.cond(QueryUser.sidebar_collapsed, "64px", "280px")],

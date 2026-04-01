@@ -21,7 +21,13 @@ Este proyecto es una aplicación web moderna construida con **Reflex** (Python) 
 - **Extracción Automática de Person ID:** Al añadir un usuario, el sistema se conecta a ATR para recuperar automáticamente su ID único.
 - **Calendario de Vacaciones:** Gestión granular de días libres y respeto a los **Festivos Nacionales** configurados.
 
-### 4. Configuración Global
+### 4. Diseño Responsive & Mobile-First
+- **Interfaz Adaptable:** La aplicación ha sido rediseñada para ser 100% funcional en **móviles, tablets y escritorio**.
+- **Navegación Móvil:** Inclusión de un menú lateral tipo "drawer" y una barra de navegación superior dedicada para dispositivos pequeños.
+- **Grids Dinámicos:** Los paneles de control y formularios se reorganizan automáticamente según el tamaño de la pantalla.
+- **Tablas Optimizadas:** Scroll horizontal y tarjetas apilables para una visualización clara en cualquier dispositivo.
+
+### 5. Configuración Global
 - **Márgenes de Jitter:** Ajuste dinámico del tiempo de aleatoriedad desde la interfaz.
 - **Modo Intensivo:** Opción para activar rápidamente la jornada intensiva por usuario.
 

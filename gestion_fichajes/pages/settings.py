@@ -1,21 +1,26 @@
 import reflex as rx
 from gestion_fichajes.state.state import QueryUser, SettingsState
 from gestion_fichajes.components.sidebar import sidebar
+from gestion_fichajes.components.navbar import navbar
 
 def settings_page() -> rx.Component:
-    return rx.hstack(
+    """Global settings page. Adapts form grids and holiday tables for mobile/tablet usability."""
+    return rx.box(
         sidebar(),
+        navbar(),
         rx.box(
             rx.vstack(
-                rx.hstack(
+                rx.vstack(
                     rx.button(
                         rx.icon(tag="arrow-left"),
                         variant="ghost",
                         on_click=lambda: rx.redirect("/"),
+                        width=["100%", "auto"],
                     ),
-                    rx.heading("Ajustes Globales", size="7"),
+                    rx.heading("Ajustes Globales", size="7", text_align="center"),
                     spacing="3",
                     align_items="center",
+                    flex_direction=["column", "row"],
                 ),
                 rx.card(
                     rx.vstack(
@@ -23,16 +28,18 @@ def settings_page() -> rx.Component:
                         rx.text("Los días añadidos aquí se aplicarán a toda la empresa. El sistema de fichaje automático se detendrá durante estos días.", size="2", color=rx.color("gray", 11)),
                         rx.divider(margin_y="4"),
                         
-                        rx.hstack(
+                        rx.vstack(
                             rx.vstack(
                                 rx.text("Fecha del Festivo", size="2", weight="medium"),
                                 rx.input(
                                     type="date", 
                                     value=SettingsState.new_holiday_date, 
                                     on_change=SettingsState.set_new_holiday_date,
-                                    variant="soft"
+                                    variant="soft",
+                                    width="100%",
                                 ),
-                                spacing="1"
+                                spacing="1",
+                                width=["100%", "100%", "auto"],
                             ),
                             rx.vstack(
                                 rx.text("Descripción / Nombre", size="2", weight="medium"),
@@ -40,22 +47,22 @@ def settings_page() -> rx.Component:
                                     placeholder="Ej: Año Nuevo", 
                                     value=SettingsState.new_holiday_name, 
                                     on_change=SettingsState.set_new_holiday_name,
-                                    variant="soft"
+                                    variant="soft",
+                                    width="100%",
                                 ),
-                                spacing="1"
+                                spacing="1",
+                                width=["100%", "100%", "auto"],
                             ),
-                            rx.vstack(
-                                rx.text(".", size="2", color="transparent"),
-                                rx.button(
-                                    rx.icon(tag="plus"), "Añadir Festivo", 
-                                    color_scheme="blue", 
-                                    on_click=SettingsState.add_holiday
-                                ),
-                                spacing="1"
+                            rx.button(
+                                rx.icon(tag="plus"), "Añadir Festivo", 
+                                color_scheme="blue", 
+                                on_click=SettingsState.add_holiday,
+                                width=["100%", "100%", "auto"],
                             ),
                             spacing="4",
                             align_items="end",
                             width="100%",
+                            flex_direction=["column", "column", "row"],
                         ),
                         
                         rx.divider(margin_y="4"),
@@ -156,7 +163,8 @@ def settings_page() -> rx.Component:
                 max_width="1200px",
                 width="100%",
                 margin="0 auto",
-                padding="40px",
+                padding=["20px", "20px", "40px"],
+                padding_top=["80px", "80px", "40px"],
             ),
             flex="1",
             margin_left=["0", "0", rx.cond(QueryUser.sidebar_collapsed, "64px", "280px")],

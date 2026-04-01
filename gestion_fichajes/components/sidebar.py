@@ -29,6 +29,7 @@ def sidebar_item(text: str, icon: str, url: str) -> rx.Component:
     )
 
 def sidebar() -> rx.Component:
+    """Fixed sidebar for desktop and sliding drawer for mobile/tablet."""
     return rx.box(
         rx.vstack(
             # Header con Logo y Toggle
@@ -53,6 +54,16 @@ def sidebar() -> rx.Component:
                     color=rx.color("gray", 9),
                     _hover={"color": rx.color("accent", 9)},
                     flex_shrink="0",
+                    display=["none", "none", "block"],
+                ),
+                # Botón de cerrar para móvil
+                rx.icon(
+                    tag="x",
+                    size=22,
+                    cursor="pointer",
+                    on_click=QueryUser.toggle_mobile_sidebar,
+                    color=rx.color("gray", 9),
+                    display=["block", "block", "none"],
                 ),
                 width="100%",
                 padding_x=rx.cond(QueryUser.sidebar_collapsed, "0px", "12px"),
@@ -172,11 +183,27 @@ def sidebar() -> rx.Component:
             bg=rx.color("gray", 2),
             border_right=f"1px solid {rx.color('gray', 4)}",
             width=rx.cond(QueryUser.sidebar_collapsed, "64px", "280px"),
-            transition="width 0.3s ease",
-            position="fixed",
-            left="0",
+            # Responsive positioning:
+            # - Desktop: Fixed at left 0.
+            # - Mobile: Offset by -280px unless toggled open via State.
+            left=[rx.cond(~QueryUser.sidebar_open, "-280px", "0px"), rx.cond(~QueryUser.sidebar_open, "-280px", "0px"), "0"],
             top="0",
-            z_index="100",
+            z_index="200",
         ),
-        display=["none", "none", "block"],
+        # Dark overlay to focus the sidebar drawer on mobile and allow closing on click.
+        rx.cond(
+            QueryUser.sidebar_open,
+            rx.box(
+                on_click=QueryUser.toggle_mobile_sidebar,
+                position="fixed",
+                top="0",
+                left="0",
+                width="100vw",
+                height="100vh",
+                bg="rgba(0,0,0,0.5)",
+                z_index="190",
+                display=["block", "block", "none"],
+            ),
+        ),
+        display="block",
     )
