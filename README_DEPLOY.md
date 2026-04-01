@@ -9,7 +9,7 @@ Desde tu terminal en la carpeta del proyecto:
 1. **Construir la imagen (para Intel/AMD/AMD64)**:
    Si estás en un Mac moderno (M1/M2/M3), necesitas forzar la plataforma del servidor (Intel/AMD):
    ```bash
-   docker build --platform linux/amd64 -t tu-usuario-dockerhub/gestion_fichajes:latest .
+   docker build --platform linux/amd64 -t rallue/gestion_fichajes:latest .
    ```
 
 2. **Login en Docker Hub**:
@@ -19,7 +19,7 @@ Desde tu terminal en la carpeta del proyecto:
 
 3. **Subir la imagen**:
    ```bash
-   docker push tu-usuario-dockerhub/gestion_fichajes:latest
+   docker push rallue/gestion_fichajes:latest
    ```
 
 ## 2. Despliegue en el Servidor (Portainer)

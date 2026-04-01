@@ -21,7 +21,12 @@ Este proyecto es una aplicación web moderna construida con **Reflex** (Python) 
 - **Extracción Automática de Person ID:** Al añadir un usuario, el sistema se conecta a ATR para recuperar automáticamente su ID único.
 - **Calendario de Vacaciones:** Gestión granular de días libres y respeto a los **Festivos Nacionales** configurados.
 
-### 4. Configuración Global
+### 4. 📱 Diseño Responsive y Móvil (NUEVO)
+- **Interfaz Adaptable:** La aplicación es 100% funcional en móviles, tablets y escritorio.
+- **Barra de Navegación Móvil:** Menú lateral tipo "drawer" con overlay y barra superior compacta para pantallas pequeñas.
+- **Grids Dinámicos:** Las tablas y estadísticas se reorganizan automáticamente para maximizar la legibilidad en cualquier dispositivo.
+
+### 5. Configuración Global
 - **Márgenes de Jitter:** Ajuste dinámico del tiempo de aleatoriedad desde la interfaz.
 - **Modo Intensivo:** Opción para activar rápidamente la jornada intensiva por usuario.
 
@@ -41,6 +46,7 @@ La comunicación se realiza a través de `ATRService`, que gestiona:
 - Autenticación segura.
 - Obtención del historial de fichajes.
 - Creación y actualización de registros (fichajes parciales y completos).
+- **Documentación de la API**: [Link en Postman](https://www.postman.com/galactic-equinox-623554/atr/documentation/uoike3y/atr-control-de-accesos-y-presencia)
 
 ---
 
@@ -58,6 +64,18 @@ reflex db migrate
 # Ejecutar en modo desarrollo
 reflex run
 ```
+
+---
+
+## 🛠️ Solución de Problemas
+
+### Error de HMR en el navegador
+Si ves un error en rojo tipo `[Reflex Frontend Exception] No module update found...`, simplemente **refresca el navegador (F5)**. Esto ocurre por desincronización del Hot Module Replacement tras fallos de compilación corregidos.
+
+### Puertos en uso
+La aplicación usa por defecto los puertos:
+- **3004**: Frontend Web.
+- **8004**: Backend API.
 
 ---
 
